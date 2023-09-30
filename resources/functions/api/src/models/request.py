@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field, field_validator
 from email_validator import validate_email, EmailNotValidError
 
 
-class CreateEntityRequest(BaseModel):
-    """Request model for creating an entity."""
+class CreateUserRequest(BaseModel):
+    """Request model for creating a user."""
 
     username: str
     password: str = Field(min_length=12)
