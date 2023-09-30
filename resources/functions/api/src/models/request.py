@@ -6,9 +6,9 @@ from email_validator import validate_email, EmailNotValidError
 class CreateEntityRequest(BaseModel):
     """Request model for creating an entity."""
 
-    username: str = Field(min_length=5)
+    username: str
     password: str = Field(min_length=12)
-    age: Optional[Annotated[int, Field(gt=0, lt=150, default=None)]] = None
+    age: Optional[Annotated[int, Field(gt=0, lt=150)]] = None
 
     @field_validator("username")
     @classmethod
