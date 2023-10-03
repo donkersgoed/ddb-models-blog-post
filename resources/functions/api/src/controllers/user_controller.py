@@ -52,6 +52,7 @@ class UserController:
             username=create_request.username,
             hashed_password=hashed_password,
             age=create_request.age,
+            role="WRITER",
             created_at_ts_ms=ms_since_epoch,
             updated_at_ts_ms=ms_since_epoch,
         )

@@ -20,7 +20,10 @@ class TestUserController:
         )
 
         create_user_request = CreateUserRequest(
-            username="test@mydomain.com", password="p1234p1234p1234", age=30
+            username="test@mydomain.com",
+            password="p1234p1234p1234",
+            age=30,
+            role="WRITER",
         )
         controller = UserController(ddb_table_name="mock_table_name")
 
@@ -46,7 +49,10 @@ class TestUserController:
         )
 
         create_user_request = CreateUserRequest(
-            username="test@mydomain.com", password="p1234p1234p1234", age=30
+            username="test@mydomain.com",
+            password="p1234p1234p1234",
+            age=30,
+            role="WRITER",
         )
         controller = UserController(ddb_table_name="mock_table_name")
 
@@ -75,6 +81,7 @@ class TestUserController:
                 "sk": "673fd197-0de3-4bbb-b2df-6ee127e9208c",
                 "username": "test@mydomain.com",
                 "hashed_password": b"$2b$12$ZqrqlJbq5GVfWTTpsz95zu0VcGfk63i7XjfuF9cS24HDDvABzi1TO",
+                "role": "WRITER",
                 "age": 30,
                 "created_at_ts_ms": 1640995200000,
                 "updated_at_ts_ms": 1640995200000,

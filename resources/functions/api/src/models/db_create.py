@@ -1,6 +1,8 @@
 from typing_extensions import Optional
 from pydantic import BaseModel
 
+from . import UserRole
+
 
 class DatabaseCreateUser(BaseModel):
     """Model representing the user being stored in the database."""
@@ -12,6 +14,8 @@ class DatabaseCreateUser(BaseModel):
     hashed_password: bytes
 
     age: Optional[int] = None
+
+    role: UserRole
 
     # Timestamp in milliseconds
     created_at_ts_ms: int

@@ -1,6 +1,9 @@
+from copy import deepcopy
 from typing_extensions import Optional
 from pydantic import BaseModel, model_validator
 from boto3.dynamodb.types import Binary, Decimal
+
+from . import UserRole
 
 
 class DatabaseViewUser(BaseModel):
@@ -14,6 +17,8 @@ class DatabaseViewUser(BaseModel):
 
     age: Optional[int] = None
 
+    role: UserRole
+
     # Timestamp in milliseconds
     created_at_ts_ms: int
     updated_at_ts_ms: int
@@ -23,13 +28,21 @@ class DatabaseViewUser(BaseModel):
     def convert_data_type_value(cls, values: dict):
         """Convert DynamoDB types to the correct Python types."""
         for key, value in values.items():
-            if type(value) is Binary:
+            if isinstance(value, Binary):
                 values[key] = bytes(value)
-            if type(value) is Decimal:
+            if isinstance(value, Decimal):
                 values[key] = int(value)
         return values
 
     @staticmethod
     def from_dynamodb_item(item: dict) -> "DatabaseViewUser":
-        """Convert a DynamoDB User item to a DatabaseViewUser object."""
-        return DatabaseViewUser(**item)
+        """
+        Convert a DynamoDB User item to a DatabaseViewUser object.
+
+        Provide backward compatibility with older models, which might
+        not have a "role" field stored in the database.
+        """
+        role = item.get("role", UserRole.READONLY)
+        item_copy = deepcopy(item)
+        item_copy["role"] = role
+        return DatabaseViewUser(**item_copy)

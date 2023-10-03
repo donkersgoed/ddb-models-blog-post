@@ -1,5 +1,3 @@
-import pytest
-from pydantic_core import ValidationError
 from boto3.dynamodb.types import Binary, Decimal
 
 
@@ -30,7 +28,7 @@ class TestDatabaseViewUser:
             "Count": 1,
             "ScannedCount": 1,
             "ResponseMetadata": {
-                # Redacted
+                # Stripped
             },
         }
 
@@ -75,7 +73,7 @@ class TestDatabaseViewUser:
             "Count": 1,
             "ScannedCount": 1,
             "ResponseMetadata": {
-                # Redacted
+                # Stripped
             },
         }
 
@@ -95,3 +93,50 @@ class TestDatabaseViewUser:
         assert model.age == 38
         assert model.created_at_ts_ms == 1696110403861
         assert model.updated_at_ts_ms == 1696110403861
+
+    @staticmethod
+    def test_create_entity_request_happy_v2():
+        # 1. ARRANGE
+        from resources.functions.api.src.models.db_view import (
+            DatabaseViewUser,
+        )
+
+        dynamodb_response = {
+            "Items": [
+                {
+                    "hashed_password": Binary(
+                        b"$2b$12$yowVgWrjapGmpjVGRsMO/OyZPlrbXnyGJ23.CT3Y3.O.jlIy616NS"
+                    ),
+                    "created_at_ts_ms": Decimal("1696109591643"),
+                    "sk": "070e7fd4-128c-486d-8ab2-09277253f2ee",
+                    "username": "lucvandonkersgoed@mydomain.com",
+                    "updated_at_ts_ms": Decimal("1696109591643"),
+                    "pk": "User",
+                    "role": "WRITER",
+                    "age": None,
+                },
+            ],
+            "Count": 1,
+            "ScannedCount": 1,
+            "ResponseMetadata": {
+                # Stripped
+            },
+        }
+
+        item = dynamodb_response["Items"][0]
+
+        # 2. ACT
+        model = DatabaseViewUser.from_dynamodb_item(item)
+
+        # 3. ASSERT
+        assert model.pk == "User"
+        assert model.sk == "070e7fd4-128c-486d-8ab2-09277253f2ee"
+        assert model.username == "lucvandonkersgoed@mydomain.com"
+        assert (
+            model.hashed_password
+            == b"$2b$12$yowVgWrjapGmpjVGRsMO/OyZPlrbXnyGJ23.CT3Y3.O.jlIy616NS"
+        )
+        assert model.age is None
+        assert model.role == "WRITER"
+        assert model.created_at_ts_ms == 1696109591643
+        assert model.updated_at_ts_ms == 1696109591643
